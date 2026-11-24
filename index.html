@@ -3,225 +3,396 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>You've Been Selected</title>
+<title>ACCESS // DS WING</title>
 <style>
 :root {
-  --bg: #07050d;
-  --ink: #f7f3ff;
-  --muted: #a79fbb;
-  --gold: #ffcc66;
-  --violet: #b08bff;
-  --line: rgba(255, 255, 255, .13);
+  --bg: #000;
+  --panel: #020603;
+  --ink: #d2ffdc;
+  --muted: #4f9c6b;
+  --green: #39ff6a;
+  --cyan: #00e5ff;
+  --red: #ff3355;
+  --line: rgba(57, 255, 106, .25);
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { margin: 0; min-height: 100%; }
 body {
-  background: radial-gradient(circle at 50% -15%, #2b1748 0, transparent 58%), var(--bg);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(57,255,106,.09) 0, transparent 55%),
+    linear-gradient(rgba(57,255,106,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,255,106,.035) 1px, transparent 1px),
+    var(--bg);
+  background-size: auto, 32px 32px, 32px 32px, auto;
   color: var(--ink);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New", monospace;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
   overflow-x: hidden;
 }
-main { width: min(430px, 100%); }
-.stage { display: none; animation: fade .45s ease both; }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,0,0,.28) 2px 3px);
+  z-index: 0;
+}
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: .32; pointer-events: none; }
+#scene .rings { transform-origin: 320px 300px; animation: spin 26s linear infinite; }
+#scene .figure { animation: hover 7s ease-in-out infinite; }
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle at 50% 45%, transparent 32%, rgba(0,0,0,.88) 100%);
+}
+#matrix, #bits { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+#matrix { opacity: .22; }
+#matrix span {
+  position: absolute;
+  top: -45%;
+  color: var(--green);
+  font: 11px/1.45 ui-monospace, monospace;
+  white-space: pre;
+  animation: rain linear infinite;
+}
+#bits span {
+  position: absolute;
+  top: -24px;
+  color: var(--green);
+  font: 13px/1 ui-monospace, monospace;
+  animation: fall 3.6s linear forwards;
+}
+#flash { position: fixed; inset: 0; background: var(--green); opacity: 0; pointer-events: none; z-index: 0; }
+#flash.on { animation: flash .3s steps(2) 1; }
+main { width: min(420px, 100%); z-index: 1; }
+.stage { display: none; animation: boot .3s ease both; }
 .stage.active { display: block; }
-.card {
-  border: 1px solid var(--line);
-  border-radius: 26px;
-  padding: 30px 24px;
-  background: linear-gradient(160deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
-  box-shadow: 0 30px 90px rgba(0,0,0,.55);
-  backdrop-filter: blur(10px);
-}
-.eyebrow {
-  font-size: 10px;
-  letter-spacing: .3em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-h1 {
-  font-size: clamp(36px, 10vw, 50px);
-  line-height: .94;
-  letter-spacing: -.045em;
-  margin: 14px 0 10px;
-}
-h1 em { font-style: normal; color: var(--gold); }
-p { color: var(--muted); line-height: 1.55; font-size: 14px; margin: 0 0 18px; }
-.scan {
-  width: 164px;
-  height: 164px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  margin: 6px auto 26px;
-  display: grid;
-  place-items: center;
+.terminal {
   position: relative;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(2,8,4,.97), rgba(0,0,0,.99));
+  box-shadow: 0 0 0 1px #000, 0 0 70px rgba(57,255,106,.09), inset 0 0 70px rgba(57,255,106,.025);
 }
-.scan::before {
+.terminal::before, .terminal::after {
   content: "";
   position: absolute;
-  inset: -9px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  border-top-color: var(--gold);
-  border-right-color: var(--violet);
-  animation: spin 1.7s linear infinite;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--green);
+  pointer-events: none;
 }
-.scan span {
-  font-size: 12px;
-  letter-spacing: .2em;
+.terminal::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.terminal::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+.windowbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  font-size: 10px;
+  letter-spacing: .08em;
   color: var(--muted);
-  text-align: center;
-  padding: 0 18px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(57,255,106,.04);
 }
-.bar {
-  height: 3px;
-  background: var(--line);
-  border-radius: 99px;
-  overflow: hidden;
-  margin-top: 22px;
-}
+.windowbar .dots { display: flex; gap: 5px; }
+.windowbar .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+.windowbar .dots i:first-child { background: var(--red); }
+.windowbar .dots i:last-child { background: var(--green); }
+.windowbar .title { flex: 1; }
+.cardbody { padding: 24px 20px 20px; }
+.eyebrow { font-size: 10px; letter-spacing: .14em; color: var(--cyan); margin-bottom: 16px; }
+.termline { min-height: 88px; font-size: 13px; line-height: 1.6; }
+.prompt { color: var(--green); }
+#line { color: var(--ink); }
+.cursor { color: var(--green); animation: blink 1s steps(1) infinite; }
+.hashline { color: var(--muted); font-size: 10px; letter-spacing: .14em; margin-top: 10px; }
+.signal { display: flex; gap: 3px; margin-top: 10px; }
+.signal i { width: 12px; height: 5px; background: rgba(57,255,106,.2); animation: signal 1.3s ease-in-out infinite; }
+.signal i:nth-child(2) { animation-delay: .2s; }
+.signal i:nth-child(3) { animation-delay: .4s; }
+.signal i:nth-child(4) { animation-delay: .6s; }
+.signal i:nth-child(5) { animation-delay: .8s; }
+.packets { display: flex; gap: 6px; margin-top: 12px; }
+.packets i { width: 34px; height: 8px; border: 1px solid var(--line); }
+.packets i.filled { background: var(--green); border-color: var(--green); box-shadow: 0 0 10px var(--green); }
+.meter { margin-top: 18px; }
+.meter-top { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: .12em; color: var(--muted); margin-bottom: 8px; }
+.meter-top #percent { color: var(--green); }
+.bar { height: 4px; background: rgba(57,255,106,.12); overflow: hidden; }
 .bar i {
   display: block;
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg, var(--violet), var(--gold));
+  background: repeating-linear-gradient(90deg, var(--green) 0 8px, var(--cyan) 8px 12px);
+  box-shadow: 0 0 12px var(--green);
 }
-video {
-  width: 100%;
-  border-radius: 16px;
-  display: block;
-  background: #000;
-}
-.line {
-  min-height: 46px;
-  font-size: 15px;
-  letter-spacing: .04em;
-  color: var(--gold);
-  margin: 18px 0 0;
-  text-align: center;
-}
-.line.pop { animation: pop .35s ease; }
+video { width: 100%; display: block; background: #000; border: 1px solid var(--line); }
 .skip {
   margin-top: 18px;
   width: 100%;
+  padding: 10px;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  background: transparent;
+  border: 1px dashed var(--line);
+  cursor: pointer;
   opacity: 0;
   pointer-events: none;
   transition: opacity .3s ease;
 }
 .skip.show { opacity: 1; pointer-events: auto; }
-button {
-  font: inherit;
-  cursor: pointer;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 14px 18px;
-  color: var(--ink);
-  background: rgba(255,255,255,.07);
-  transition: transform .15s ease, border-color .2s ease;
-}
-button:hover { transform: translateY(-1px); border-color: var(--gold); }
-button.primary {
-  width: 100%;
-  margin-top: 14px;
-  font-weight: 700;
-  background: linear-gradient(100deg, var(--violet), #7b5cff);
-  color: #0b0616;
-  border: 0;
-}
-input {
-  width: 100%;
-  padding: 16px 18px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: rgba(0,0,0,.38);
-  color: var(--ink);
-  font-size: 16px;
-  outline: none;
-}
-input:focus { border-color: var(--gold); }
-.hint {
-  color: var(--gold);
-  font-size: 13px;
-  margin: 12px 0 0;
-  min-height: 18px;
-}
-.shake { animation: shake .35s ease; }
-.details { display: grid; gap: 14px; margin: 24px 0 8px; }
-.detail { border-left: 2px solid var(--gold); padding: 2px 0 2px 14px; }
-.detail b {
-  display: block;
-  font-size: 9px;
-  letter-spacing: .22em;
+.skip:hover { color: var(--green); border-color: var(--green); }
+h1 {
+  font: 700 clamp(34px, 10vw, 48px)/.9 ui-monospace, monospace;
+  letter-spacing: -.02em;
+  margin: 0 0 14px;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 4px;
+  text-shadow: 2px 0 0 rgba(255,51,85,.35), -2px 0 0 rgba(0,229,255,.3);
 }
-.detail span { font-size: 16px; }
-.actions { display: grid; gap: 10px; margin-top: 22px; }
-#confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
-#confetti i {
+h1 span { color: var(--green); }
+.codebox {
+  border-left: 2px solid var(--green);
+  background: rgba(57,255,106,.05);
+  padding: 12px 14px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+label { display: block; font-size: 11px; color: var(--green); margin-bottom: 8px; }
+input, textarea {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  background: rgba(0,0,0,.7);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  caret-color: var(--green);
+  margin-bottom: 13px;
+  resize: vertical;
+}
+input:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 1px rgba(57,255,106,.2); }
+button.action {
+  width: 100%;
+  margin-top: 4px;
+  padding: 13px;
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: #001006;
+  background: var(--green);
+  border: 0;
+  cursor: pointer;
+}
+button.action:hover { background: var(--cyan); }
+button.action.ghost { background: transparent; color: var(--green); border: 1px solid var(--line); }
+button.action.ghost:hover { border-color: var(--green); }
+button.action.no { color: var(--red); border-color: rgba(255,51,85,.4); background: transparent; }
+button.action.no:hover { background: rgba(255,51,85,.12); border-color: var(--red); }
+.choice { display: grid; gap: 10px; margin-top: 8px; }
+.hint { color: var(--cyan); font-size: 11px; margin: 10px 0 0; min-height: 16px; }
+.hint.error { color: var(--red); }
+.shake { animation: glitch .3s ease; }
+.details { display: grid; gap: 11px; margin: 18px 0 4px; }
+.detail { border-left: 1px solid var(--line); padding: 2px 0 2px 12px; }
+.detail b { display: block; color: var(--muted); font-size: 10px; font-weight: 400; letter-spacing: .1em; }
+.detail span { color: var(--ink); font-size: 14px; }
+.ticket { border: 1px dashed var(--line); padding: 12px; margin: 16px 0; color: var(--green); font-size: 13px; }
+.count { color: var(--cyan); font-size: 11px; margin-top: 10px; }
+.actions { display: grid; gap: 10px; margin-top: 18px; }
+.sad { filter: grayscale(.85); opacity: .78; }
+.sad h1 { color: var(--muted); text-shadow: none; }
+.heart { color: var(--red); font-size: 28px; letter-spacing: .3em; animation: fade 2.4s ease-in-out infinite; }
+.log { min-height: 44px; margin-bottom: 8px; }
+.log div { color: var(--muted); font-size: 11px; line-height: 1.5; opacity: .5; }
+.sweep {
   position: absolute;
-  top: -20px;
-  width: 8px;
-  height: 14px;
-  border-radius: 2px;
-  animation: fall 3.4s linear forwards;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  opacity: .35;
+  pointer-events: none;
+  animation: sweep 5s linear infinite;
 }
-@keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.trace { color: var(--red); font-size: 9px; letter-spacing: .1em; }
+.breach { animation: breach .4s steps(3) 1; }
 @keyframes spin { to { transform: rotate(360deg); } }
-@keyframes pop { 50% { transform: scale(1.07); opacity: .6; } }
-@keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-@keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
+@keyframes hover { 50% { transform: translateY(-10px); } }
+@keyframes sweep { to { transform: translateY(420px); } }
+@keyframes breach { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+@keyframes rain { to { transform: translateY(160vh); } }
+@keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes boot { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes glitch { 20% { transform: translate(-5px, 2px); } 50% { transform: translate(4px, -2px); } 80% { transform: translate(-2px, 1px); } }
+@keyframes flash { 20% { opacity: .5; } 60% { opacity: .1; } 100% { opacity: 0; } }
+@keyframes signal { 0%, 100% { background: rgba(57,255,106,.2); } 50% { background: var(--green); } }
+@keyframes fade { 50% { opacity: .25; } }
 </style>
 </head>
 <body>
-<div id="confetti" aria-hidden="true"></div>
+<svg id="scene" viewBox="0 0 640 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <radialGradient id="halo"><stop offset="0" stop-color="#39ff6a" stop-opacity=".32"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <linearGradient id="hood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b2814"/><stop offset="1" stop-color="#010603"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <circle cx="320" cy="320" r="280" fill="url(#halo)"/>
+  <g class="rings" fill="none" stroke="#39ff6a" stroke-opacity=".32">
+    <circle cx="320" cy="300" r="200" stroke-dasharray="5 13"/>
+    <circle cx="320" cy="300" r="160" stroke-dasharray="2 9"/>
+    <path d="M320 40V560 M60 300H580"/>
+  </g>
+  <g class="figure">
+    <path d="M20 720 C70 545 180 465 320 465 C460 465 570 545 620 720 Z" fill="url(#hood)" stroke="#39ff6a" stroke-opacity=".22"/>
+    <path d="M320 115 C200 115 145 220 162 330 C179 442 240 512 320 512 C400 512 461 442 478 330 C495 220 440 115 320 115 Z" fill="#031008" stroke="#39ff6a" stroke-opacity=".38"/>
+    <path d="M320 180 C252 180 222 235 230 315 C238 386 275 437 320 437 C365 437 402 386 410 315 C418 235 388 180 320 180 Z" fill="#000"/>
+    <g filter="url(#glow)" fill="#39ff6a">
+      <rect x="255" y="299" width="46" height="7" rx="3"/>
+      <rect x="339" y="299" width="46" height="7" rx="3"/>
+    </g>
+    <text x="196" y="245" fill="#39ff6a" fill-opacity=".4" font-size="12" font-family="monospace">0110</text>
+    <text x="410" y="245" fill="#39ff6a" fill-opacity=".4" font-size="12" font-family="monospace">1011</text>
+    <text x="214" y="395" fill="#39ff6a" fill-opacity=".28" font-size="10" font-family="monospace">DS_WING</text>
+    <path d="M180 470 L120 720 M460 470 L520 720" stroke="#39ff6a" stroke-opacity=".18" fill="none"/>
+  </g>
+</svg>
+<div id="matrix" aria-hidden="true"></div>
+<div id="bits" aria-hidden="true"></div>
+<div id="flash" aria-hidden="true"></div>
 <main>
-  <section id="stage-video" class="stage active">
-    <div class="card">
-      <div class="eyebrow">Encrypted invite · 00:20</div>
-      <div id="teaser">
-        <div class="scan"><span id="scan-status">SCANNING</span></div>
+  <section id="stage-access" class="stage active">
+    <div class="terminal">
+      <div class="windowbar"><span class="dots"><i></i><i></i><i></i></span><span class="title">gate : ds wing</span><span>LOCKED</span></div>
+      <div class="cardbody">
+        <div class="eyebrow">// DS WING ONLY //</div>
+        <h1>ACCESS<span>_</span></h1>
+        <div class="codebox">Department code required.</div>
+        <label for="access-code">root@gate:~$</label>
+        <input id="access-code" type="password" placeholder="code" autocomplete="off" spellcheck="false">
+        <button id="access-unlock" class="action" type="button">[ UNLOCK ]</button>
+        <p id="access-hint" class="hint" aria-live="polite"></p>
       </div>
-      <video id="invite-video" hidden muted playsinline></video>
-      <div id="line" class="line">Hold on.</div>
-      <div class="bar"><i id="progress"></i></div>
-      <button id="skip" class="skip" type="button">Skip intro →</button>
+    </div>
+  </section>
+
+  <section id="stage-video" class="stage">
+    <div class="terminal">
+      <div class="windowbar"><span class="dots"><i></i><i></i><i></i></span><span class="title">root@ds-wing:~#</span><span id="clock">00:00</span></div>
+      <div class="cardbody">
+        <div class="eyebrow">// SECURE LINK //</div>
+        <div id="teaser">
+          <div class="log" id="log"></div>
+          <div class="termline"><span class="prompt">$</span> <span id="line"></span><span class="cursor">_</span></div>
+          <div class="hashline" id="hashline">0x000000</div>
+          <div class="signal"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="packets" id="packets"><i></i><i></i><i></i></div>
+        </div>
+        <div class="sweep"></div>
+        <video id="invite-video" hidden muted playsinline></video>
+        <div class="meter">
+          <div class="meter-top"><span id="meter-label">LINK</span><span class="trace" id="trace">TRACE 02%</span><span id="percent">0%</span></div>
+          <div class="bar"><i id="progress"></i></div>
+        </div>
+        <button id="skip" class="skip" type="button">[ SKIP ]</button>
+      </div>
     </div>
   </section>
 
   <section id="stage-question" class="stage">
-    <div class="card">
-      <div class="eyebrow">One question</div>
-      <h1>Prove it<em>.</em></h1>
-      <p>The video told you. Finish the line:</p>
-      <p style="color:var(--ink);font-size:18px;font-weight:600;margin-bottom:20px">“You've been ___.”</p>
-      <label for="answer" class="eyebrow" style="display:block;margin-bottom:8px">Your answer</label>
-      <input id="answer" type="text" placeholder="type here" autocomplete="off" autocapitalize="off" spellcheck="false">
-      <button id="unlock" class="primary" type="button">Unlock details →</button>
-      <p id="hint" class="hint" aria-live="polite"></p>
+    <div class="terminal">
+      <div class="windowbar"><span class="dots"><i></i><i></i><i></i></span><span class="title">auth : 1/3</span><span>WAIT</span></div>
+      <div class="cardbody">
+        <div class="eyebrow">// AUTH GATE //</div>
+        <h1>VERIFY<span>_</span></h1>
+        <div class="codebox">"You've been ___."</div>
+        <label for="answer">root@ds-wing:~$</label>
+        <input id="answer" type="text" placeholder="answer" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button id="unlock" class="action" type="button">[ ENTER ]</button>
+        <p id="hint" class="hint" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="stage-online" class="stage">
+    <div class="terminal">
+      <div class="windowbar"><span class="dots"><i></i><i></i><i></i></span><span class="title">auth : 2/3</span><span>ONLINE</span></div>
+      <div class="cardbody">
+        <div class="eyebrow">// ONLINE RECON //</div>
+        <h1>SEARCH<span>_</span></h1>
+        <div class="codebox" id="online-question"></div>
+        <label for="online-answer">root@ds-wing:~$</label>
+        <input id="online-answer" type="text" placeholder="answer" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button id="online-unlock" class="action" type="button">[ ENTER ]</button>
+        <p id="online-hint" class="hint" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="stage-rsvp" class="stage">
+    <div class="terminal">
+      <div class="windowbar"><span class="dots"><i></i><i></i><i></i></span><span class="title">form : 3/3</span><span>CHECK IN</span></div>
+      <div class="cardbody">
+        <div class="eyebrow">// FINAL CHECK //</div>
+        <h1>CHECK<br>IN<span>_</span></h1>
+        <label for="teacher-name">teacher name</label>
+        <input id="teacher-name" type="text" placeholder="teacher" autocomplete="off" spellcheck="false">
+        <label for="teacher-dialogue">write a favt dialogue of your teacher</label>
+        <textarea id="teacher-dialogue" rows="4" placeholder="type dialogue"></textarea>
+        <div class="choice">
+          <button id="rsvp-yes" class="action" type="button">[ YES — BOOK SEAT ]</button>
+          <button id="rsvp-no" class="action no" type="button">[ NO ]</button>
+        </div>
+        <p id="rsvp-hint" class="hint" aria-live="polite"></p>
+      </div>
     </div>
   </section>
 
   <section id="stage-unlocked" class="stage">
-    <div class="card">
-      <div class="eyebrow">Access granted</div>
-      <h1>Welcome,<br><em>junior.</em></h1>
-      <p>You made it through. Here's everything you need.</p>
-      <div class="details">
-        <div class="detail"><b>When</b><span id="out-date"></span></div>
-        <div class="detail"><b>Time</b><span id="out-time"></span></div>
-        <div class="detail"><b>Where</b><span id="out-venue"></span></div>
-        <div class="detail"><b>RSVP</b><span id="out-rsvp"></span></div>
+    <div class="terminal">
+      <div class="windowbar"><span class="dots"><i></i><i></i><i></i></span><span class="title">session : booked</span><span>OK</span></div>
+      <div class="cardbody">
+        <div class="eyebrow">// SEAT CONFIRMED //</div>
+        <h1>WELCOME<span>_</span></h1>
+        <div class="ticket" id="ticket"></div>
+        <div class="details">
+          <div class="detail"><b>date</b><span id="out-date"></span></div>
+          <div class="detail"><b>time</b><span id="out-time"></span></div>
+          <div class="detail"><b>location</b><span id="out-venue"></span></div>
+          <div class="detail"><b>rsvp</b><span id="out-rsvp"></span></div>
+        </div>
+        <div class="count" id="out-count"></div>
+        <div class="actions">
+          <button id="resend" class="action" type="button">[ SEND AGAIN ]</button>
+          <button id="calendar" class="action ghost" type="button">[ SAVE .ICS ]</button>
+          <button id="again" class="action ghost" type="button">[ REPLAY ]</button>
+        </div>
       </div>
-      <div class="actions">
-        <button id="calendar" type="button">Add to calendar</button>
-        <button id="again" type="button">Replay the intro</button>
+    </div>
+  </section>
+
+  <section id="stage-sad" class="stage">
+    <div class="terminal sad">
+      <div class="windowbar"><span class="dots"><i></i><i></i><i></i></span><span class="title">session : dropped</span><span>NO</span></div>
+      <div class="cardbody">
+        <div class="eyebrow">// SIGNAL LOST //</div>
+        <div class="heart">&lt;3</div>
+        <h1>SEAT<br>EMPTY<span>_</span></h1>
+        <div class="codebox">no booking. we'll leave a space.</div>
+        <button id="reconsider" class="action ghost" type="button">[ RECONSIDER ]</button>
       </div>
     </div>
   </section>
@@ -229,73 +400,216 @@ input:focus { border-color: var(--gold); }
 
 <script>
 const party = {
-  title: "Welcome Party — Juniors",
-  dateLabel: "Friday, 12 December 2026",
-  timeLabel: "7:00 PM – 10:00 PM",
-  venueLabel: "Main Auditorium, Block A",
-  rsvpLabel: "Reply to your senior coordinator by 5 December",
-  icsStart: "20261212T190000",
-  icsEnd: "20261212T220000"
+  title: "DS Department — Welcome Party",
+  dateLabel: "Saturday, 12 December 2026",
+  timeLabel: "10:00 AM onwards",
+  venueLabel: "Durshawl Morque",
+  rsvpLabel: "Confirm your spot with your senior coordinator",
+  icsStart: "20261212T100000",
+  icsEnd: "20261212T120000"
 };
+const rsvpEmail = "usakhan3231@gmail.com";
+const accessCodeHash = 2331010690;
 const videoSrc = "";
+const introDuration = 32;
+const questions = [
+  { text: "Python alias `pd` = ?", answer: "pandas", hint: "import as pd" },
+  { text: "Python module imported as `plt` = ?", answer: "matplotlib.pyplot", hint: "pyplot" },
+  { text: "2D array library in Python = ?", answer: "numpy", hint: "numerical python" },
+  { text: "CSV stands for ?", answer: "comma separated values", hint: "file format" },
+  { text: "SQL stands for ?", answer: "structured query language", hint: "database language" },
+  { text: "Correct predictions / total = ?", answer: "accuracy", hint: "classification metric" },
+  { text: "Yes/no split model = ?", answer: "decision tree", hint: "tree" },
+  { text: "Python keyword for a function = ?", answer: "def", hint: "define" }
+];
 
 const stages = document.querySelectorAll(".stage");
+const accessCode = document.getElementById("access-code");
+const accessHint = document.getElementById("access-hint");
 const line = document.getElementById("line");
 const progress = document.getElementById("progress");
+const percent = document.getElementById("percent");
+const meterLabel = document.getElementById("meter-label");
+const hashline = document.getElementById("hashline");
+const log = document.getElementById("log");
+const trace = document.getElementById("trace");
+const clock = document.getElementById("clock");
 const skip = document.getElementById("skip");
 const answer = document.getElementById("answer");
 const hint = document.getElementById("hint");
+const onlineQuestion = document.getElementById("online-question");
+const onlineAnswer = document.getElementById("online-answer");
+const onlineHint = document.getElementById("online-hint");
+const teacherName = document.getElementById("teacher-name");
+const teacherDialogue = document.getElementById("teacher-dialogue");
+const rsvpHint = document.getElementById("rsvp-hint");
+const ticket = document.getElementById("ticket");
+const outCount = document.getElementById("out-count");
 const media = document.getElementById("invite-video");
+const flash = document.getElementById("flash");
+const packets = document.querySelectorAll("#packets i");
 let wentToQuestion = false;
+let introTimer = null;
+let typer = null;
+let hashTimer = null;
+let packetCount = 0;
+let currentQuestion = pickQuestion();
+let registrations = [];
+let currentEntry = null;
+
+try {
+  registrations = JSON.parse(localStorage.getItem("dsRegistrations") || "[]");
+} catch (error) {
+  registrations = [];
+}
+
+function pickQuestion() {
+  return questions[Math.floor(Math.random() * questions.length)];
+}
+
+function hashString(text) {
+  let value = 2166136261;
+  for (let i = 0; i < text.length; i++) {
+    value ^= text.charCodeAt(i);
+    value = Math.imul(value, 16777619) >>> 0;
+  }
+  return value >>> 0;
+}
 
 function show(id) {
   stages.forEach(stage => stage.classList.toggle("active", stage.id === id));
 }
 
+function stopIntro() {
+  clearInterval(introTimer);
+  clearInterval(typer);
+  clearInterval(hashTimer);
+}
+
+function accessUnlock() {
+  if (hashString(accessCode.value.trim()) !== accessCodeHash) {
+    accessHint.textContent = "[DENIED] wrong code.";
+    accessHint.classList.add("error");
+    const card = accessCode.closest(".terminal");
+    card.classList.remove("shake");
+    void card.offsetWidth;
+    card.classList.add("shake");
+    return;
+  }
+  sessionStorage.setItem("dsAccess", "1");
+  show("stage-video");
+  runTeaser();
+}
+
 function toQuestion() {
   if (wentToQuestion) return;
+  stopIntro();
   wentToQuestion = true;
   show("stage-question");
   answer.focus();
 }
 
-function setLine(text) {
-  line.textContent = text;
-  line.classList.remove("pop");
-  void line.offsetWidth;
-  line.classList.add("pop");
+function pushLog(text) {
+  const row = document.createElement("div");
+  row.textContent = text;
+  log.appendChild(row);
+  while (log.children.length > 3) log.removeChild(log.firstChild);
+}
+
+function typeLine(text) {
+  clearInterval(typer);
+  line.textContent = "";
+  let index = 0;
+  typer = setInterval(() => {
+    line.textContent = text.slice(0, ++index);
+    if (index >= text.length) clearInterval(typer);
+  }, 15);
+}
+
+function randomHash() {
+  const glyphs = "0123456789abcdef";
+  let value = "0x";
+  for (let i = 0; i < 6; i++) value += glyphs[Math.floor(Math.random() * glyphs.length)];
+  return value;
+}
+
+function startMatrix() {
+  const box = document.getElementById("matrix");
+  const glyphs = "01ABCDEF";
+  for (let i = 0; i < 15; i++) {
+    const column = document.createElement("span");
+    let text = "";
+    for (let j = 0; j < 20; j++) text += glyphs[Math.floor(Math.random() * glyphs.length)] + "\n";
+    column.textContent = text;
+    column.style.left = (i * 6.8 + Math.random() * 2) + "%";
+    column.style.animationDelay = (Math.random() * 5) + "s";
+    column.style.animationDuration = (7 + Math.random() * 6) + "s";
+    box.appendChild(column);
+  }
 }
 
 function runTeaser() {
   const beats = [
-    { at: 0, text: "Scan complete. One identity found.", status: "SCANNING" },
-    { at: 4, text: "Checking the junior list…", status: "MATCH FOUND" },
-    { at: 8, text: "Seniors, we have a match.", status: "VERIFIED" },
-    { at: 11, text: "YOU'VE BEEN SELECTED.", status: "SELECTED" },
-    { at: 15, text: "One question stands between you and the details.", status: "DECRYPTING" },
-    { at: 19, text: "Unlocking…", status: "UNLOCKING" }
+    { at: 0, text: "> link established", meta: "LINK" },
+    { at: 2, text: "> pull roster.db", meta: "ROSTER" },
+    { at: 4, text: "> 204 rows -> 1", meta: "SCAN" },
+    { at: 6, text: "> noise discarded", meta: "FILTER" },
+    { at: 8, text: "> target isolated", meta: "MATCH" },
+    { at: 10, text: "> hash mismatch", meta: "ALERT" },
+    { at: 12, text: "> recalibrate", meta: "RESET" },
+    { at: 14, text: "> hash ok", meta: "TRUST" },
+    { at: 16, text: "> packet 1/3", meta: "PACKET" },
+    { at: 18, text: "> packet 2/3", meta: "PACKET" },
+    { at: 20, text: "> packet 3/3", meta: "PACKET" },
+    { at: 22, text: "> decrypt 88%", meta: "DECRYPT" },
+    { at: 24, text: "> SELECTED", meta: "TARGET" },
+    { at: 26, text: "> override: senior", meta: "OVERRIDE" },
+    { at: 28, text: "> payload ready", meta: "READY" },
+    { at: 30, text: "> auth gate on", meta: "AUTH" }
   ];
   const started = Date.now();
-  const scanStatus = document.getElementById("scan-status");
   let next = 0;
-  const timer = setInterval(() => {
+  hashline.textContent = randomHash();
+  meterLabel.textContent = beats[0].meta;
+
+  introTimer = setInterval(() => {
     const seconds = (Date.now() - started) / 1000;
     while (next < beats.length && seconds >= beats[next].at) {
-      setLine(beats[next].text);
-      scanStatus.textContent = beats[next].status;
+      pushLog(beats[next].text);
+      typeLine(beats[next].text);
+      meterLabel.textContent = beats[next].meta;
+      if (beats[next].meta === "PACKET" && packetCount < packets.length) {
+        packets[packetCount].classList.add("filled");
+        packetCount++;
+      }
+      if (beats[next].meta === "TARGET") {
+        flash.classList.remove("on");
+        void flash.offsetWidth;
+        flash.classList.add("on");
+        const consoleBox = document.querySelector("#stage-video .terminal");
+        consoleBox.classList.remove("breach");
+        void consoleBox.offsetWidth;
+        consoleBox.classList.add("breach");
+      }
       next++;
     }
-    progress.style.width = Math.min(100, seconds / 20 * 100) + "%";
-    if (seconds >= 20) {
-      clearInterval(timer);
-      toQuestion();
-    }
+    const pct = Math.min(100, Math.round(seconds / introDuration * 100));
+    progress.style.width = pct + "%";
+    percent.textContent = pct + "%";
+    clock.textContent = "00:" + String(Math.min(59, Math.floor(seconds))).padStart(2, "0");
+    if (seconds >= introDuration) toQuestion();
   }, 100);
+
+  hashTimer = setInterval(() => {
+    hashline.textContent = randomHash();
+    trace.textContent = "TRACE " + String(Math.floor(Math.random() * 90) + 10) + "%";
+  }, 260);
+
   setTimeout(() => skip.classList.add("show"), 4000);
-  skip.addEventListener("click", () => {
-    clearInterval(timer);
+  skip.onclick = () => {
+    stopIntro();
     toQuestion();
-  });
+  };
 }
 
 function startVideo() {
@@ -304,37 +618,96 @@ function startVideo() {
   media.src = videoSrc;
   media.play().catch(() => {});
   media.addEventListener("ended", toQuestion);
-  setTimeout(toQuestion, 25000);
+  setTimeout(toQuestion, 40000);
   setTimeout(() => skip.classList.add("show"), 4000);
-  skip.addEventListener("click", toQuestion);
+  skip.onclick = toQuestion;
 }
 
-function confetti() {
-  const box = document.getElementById("confetti");
-  const colors = ["#ffcc66", "#b08bff", "#7b5cff", "#ffffff"];
-  for (let i = 0; i < 45; i++) {
-    const bit = document.createElement("i");
+function bits() {
+  const box = document.getElementById("bits");
+  for (let i = 0; i < 55; i++) {
+    const bit = document.createElement("span");
+    bit.textContent = Math.random() > .5 ? "1" : "0";
     bit.style.left = Math.random() * 100 + "%";
-    bit.style.background = colors[i % colors.length];
+    bit.style.color = i % 3 === 0 ? "var(--cyan)" : "var(--green)";
     bit.style.animationDelay = (Math.random() * 1.2) + "s";
-    bit.style.transform = "rotate(" + Math.random() * 180 + "deg)";
     box.appendChild(bit);
-    setTimeout(() => bit.remove(), 5000);
+    setTimeout(() => bit.remove(), 5200);
   }
 }
 
 function unlock() {
   const value = answer.value.trim().toLowerCase().replace(/[^a-z]/g, "");
   if (value.includes("selected")) {
-    show("stage-unlocked");
-    confetti();
+    show("stage-online");
+    onlineAnswer.focus();
     return;
   }
-  hint.textContent = "Hint: it starts with S and ends with -ected.";
-  const card = answer.closest(".card");
+  hint.textContent = "[DENIED]";
+  hint.classList.add("error");
+  const card = answer.closest(".terminal");
   card.classList.remove("shake");
   void card.offsetWidth;
   card.classList.add("shake");
+}
+
+function verifyOnline() {
+  const value = onlineAnswer.value.trim().toLowerCase().replace(/[^a-z]/g, "");
+  const key = currentQuestion.answer.toLowerCase().replace(/[^a-z]/g, "");
+  const ok = key.length <= 4 ? value === key : value.includes(key);
+  if (ok) {
+    show("stage-rsvp");
+    teacherName.focus();
+    return;
+  }
+  onlineHint.textContent = "[DENIED] hint: " + currentQuestion.hint;
+  onlineHint.classList.add("error");
+  const card = onlineAnswer.closest(".terminal");
+  card.classList.remove("shake");
+  void card.offsetWidth;
+  card.classList.add("shake");
+}
+
+function attendingCount() {
+  return registrations.filter(entry => entry.attending).length;
+}
+
+function sendEmail(entry) {
+  const body = "Teacher: " + entry.teacher + "\nDialogue: " + entry.dialogue + "\nSeat: " + entry.seat + "\nStatus: YES";
+  const url = "mailto:" + rsvpEmail + "?subject=" + encodeURIComponent("DS Party RSVP " + entry.seat) + "&body=" + encodeURIComponent(body);
+  window.location.href = url;
+}
+
+function rsvp(attending) {
+  if (!attending) {
+    show("stage-sad");
+    return;
+  }
+  if (!teacherName.value.trim() || !teacherDialogue.value.trim()) {
+    rsvpHint.textContent = "[INCOMPLETE] teacher + dialogue required.";
+    rsvpHint.classList.add("error");
+    const card = teacherDialogue.closest(".terminal");
+    card.classList.remove("shake");
+    void card.offsetWidth;
+    card.classList.add("shake");
+    return;
+  }
+  const seat = "DS-" + String(attendingCount() + 1).padStart(3, "0");
+  const entry = {
+    teacher: teacherName.value.trim(),
+    dialogue: teacherDialogue.value.trim(),
+    seat,
+    attending: true,
+    time: new Date().toISOString()
+  };
+  registrations.push(entry);
+  localStorage.setItem("dsRegistrations", JSON.stringify(registrations));
+  currentEntry = entry;
+  ticket.textContent = "SEAT " + seat + " // " + entry.name;
+  outCount.textContent = "SEATS BOOKED: " + attendingCount();
+  show("stage-unlocked");
+  bits();
+  sendEmail(entry);
 }
 
 function downloadCalendar() {
@@ -343,7 +716,7 @@ function downloadCalendar() {
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Welcome Party//EN",
+    "PRODID:-//DS Department Welcome//EN",
     "BEGIN:VEVENT",
     "UID:" + Date.now() + "@welcome.local",
     "DTSTAMP:" + stamp,
@@ -358,31 +731,65 @@ function downloadCalendar() {
   const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
   const link = document.createElement("a");
   link.href = url;
-  link.download = "welcome-party.ics";
+  link.download = "ds-welcome-party.ics";
   link.click();
   URL.revokeObjectURL(url);
 }
+
+document.getElementById("access-unlock").addEventListener("click", accessUnlock);
+accessCode.addEventListener("keydown", event => {
+  if (event.key === "Enter") accessUnlock();
+});
+document.getElementById("unlock").addEventListener("click", unlock);
+document.getElementById("online-unlock").addEventListener("click", verifyOnline);
+document.getElementById("rsvp-yes").addEventListener("click", () => rsvp(true));
+document.getElementById("rsvp-no").addEventListener("click", () => rsvp(false));
+document.getElementById("resend").addEventListener("click", () => {
+  if (currentEntry) sendEmail(currentEntry);
+});
+document.getElementById("reconsider").addEventListener("click", () => show("stage-rsvp"));
+document.getElementById("calendar").addEventListener("click", downloadCalendar);
+answer.addEventListener("keydown", event => {
+  if (event.key === "Enter") unlock();
+});
+onlineAnswer.addEventListener("keydown", event => {
+  if (event.key === "Enter") verifyOnline();
+});
+document.getElementById("again").addEventListener("click", () => {
+  wentToQuestion = false;
+  stopIntro();
+  skip.classList.remove("show");
+  progress.style.width = "0";
+  percent.textContent = "0%";
+  clock.textContent = "00:00";
+  packets.forEach(packet => packet.classList.remove("filled"));
+  packetCount = 0;
+  log.textContent = "";
+  trace.textContent = "TRACE 02%";
+  hint.textContent = "";
+  hint.classList.remove("error");
+  onlineHint.textContent = "";
+  onlineHint.classList.remove("error");
+  answer.value = "";
+  onlineAnswer.value = "";
+  line.textContent = "";
+  currentQuestion = pickQuestion();
+  onlineQuestion.textContent = currentQuestion.text;
+  show("stage-video");
+  runTeaser();
+});
 
 document.getElementById("out-date").textContent = party.dateLabel;
 document.getElementById("out-time").textContent = party.timeLabel;
 document.getElementById("out-venue").textContent = party.venueLabel;
 document.getElementById("out-rsvp").textContent = party.rsvpLabel;
-document.getElementById("unlock").addEventListener("click", unlock);
-document.getElementById("calendar").addEventListener("click", downloadCalendar);
-answer.addEventListener("keydown", event => {
-  if (event.key === "Enter") unlock();
-});
-document.getElementById("again").addEventListener("click", () => {
-  wentToQuestion = false;
-  skip.classList.remove("show");
-  progress.style.width = "0";
-  hint.textContent = "";
-  answer.value = "";
+onlineQuestion.textContent = currentQuestion.text;
+startMatrix();
+
+if (sessionStorage.getItem("dsAccess") === "1") {
   show("stage-video");
   runTeaser();
-});
-
-if (videoSrc) startVideo(); else runTeaser();
+}
 </script>
 </body>
 </html>
