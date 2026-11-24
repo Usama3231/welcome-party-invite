@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>You've Been Selected</title>
+<style>
+:root {
+  --bg: #07050d;
+  --ink: #f7f3ff;
+  --muted: #a79fbb;
+  --gold: #ffcc66;
+  --violet: #b08bff;
+  --line: rgba(255, 255, 255, .13);
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  background: radial-gradient(circle at 50% -15%, #2b1748 0, transparent 58%), var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-x: hidden;
+}
+main { width: min(430px, 100%); }
+.stage { display: none; animation: fade .45s ease both; }
+.stage.active { display: block; }
+.card {
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  padding: 30px 24px;
+  background: linear-gradient(160deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+  box-shadow: 0 30px 90px rgba(0,0,0,.55);
+  backdrop-filter: blur(10px);
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+h1 {
+  font-size: clamp(36px, 10vw, 50px);
+  line-height: .94;
+  letter-spacing: -.045em;
+  margin: 14px 0 10px;
+}
+h1 em { font-style: normal; color: var(--gold); }
+p { color: var(--muted); line-height: 1.55; font-size: 14px; margin: 0 0 18px; }
+.scan {
+  width: 164px;
+  height: 164px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  margin: 6px auto 26px;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+.scan::before {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--gold);
+  border-right-color: var(--violet);
+  animation: spin 1.7s linear infinite;
+}
+.scan span {
+  font-size: 12px;
+  letter-spacing: .2em;
+  color: var(--muted);
+  text-align: center;
+  padding: 0 18px;
+}
+.bar {
+  height: 3px;
+  background: var(--line);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 22px;
+}
+.bar i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--violet), var(--gold));
+}
+video {
+  width: 100%;
+  border-radius: 16px;
+  display: block;
+  background: #000;
+}
+.line {
+  min-height: 46px;
+  font-size: 15px;
+  letter-spacing: .04em;
+  color: var(--gold);
+  margin: 18px 0 0;
+  text-align: center;
+}
+.line.pop { animation: pop .35s ease; }
+.skip {
+  margin-top: 18px;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+.skip.show { opacity: 1; pointer-events: auto; }
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 18px;
+  color: var(--ink);
+  background: rgba(255,255,255,.07);
+  transition: transform .15s ease, border-color .2s ease;
+}
+button:hover { transform: translateY(-1px); border-color: var(--gold); }
+button.primary {
+  width: 100%;
+  margin-top: 14px;
+  font-weight: 700;
+  background: linear-gradient(100deg, var(--violet), #7b5cff);
+  color: #0b0616;
+  border: 0;
+}
+input {
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(0,0,0,.38);
+  color: var(--ink);
+  font-size: 16px;
+  outline: none;
+}
+input:focus { border-color: var(--gold); }
+.hint {
+  color: var(--gold);
+  font-size: 13px;
+  margin: 12px 0 0;
+  min-height: 18px;
+}
+.shake { animation: shake .35s ease; }
+.details { display: grid; gap: 14px; margin: 24px 0 8px; }
+.detail { border-left: 2px solid var(--gold); padding: 2px 0 2px 14px; }
+.detail b {
+  display: block;
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.detail span { font-size: 16px; }
+.actions { display: grid; gap: 10px; margin-top: 22px; }
+#confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+#confetti i {
+  position: absolute;
+  top: -20px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  animation: fall 3.4s linear forwards;
+}
+@keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pop { 50% { transform: scale(1.07); opacity: .6; } }
+@keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+@keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
+</style>
+</head>
+<body>
+<div id="confetti" aria-hidden="true"></div>
+<main>
+  <section id="stage-video" class="stage active">
+    <div class="card">
+      <div class="eyebrow">Encrypted invite · 00:20</div>
+      <div id="teaser">
+        <div class="scan"><span id="scan-status">SCANNING</span></div>
+      </div>
+      <video id="invite-video" hidden muted playsinline></video>
+      <div id="line" class="line">Hold on.</div>
+      <div class="bar"><i id="progress"></i></div>
+      <button id="skip" class="skip" type="button">Skip intro →</button>
+    </div>
+  </section>
+
+  <section id="stage-question" class="stage">
+    <div class="card">
+      <div class="eyebrow">One question</div>
+      <h1>Prove it<em>.</em></h1>
+      <p>The video told you. Finish the line:</p>
+      <p style="color:var(--ink);font-size:18px;font-weight:600;margin-bottom:20px">“You've been ___.”</p>
+      <label for="answer" class="eyebrow" style="display:block;margin-bottom:8px">Your answer</label>
+      <input id="answer" type="text" placeholder="type here" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button id="unlock" class="primary" type="button">Unlock details →</button>
+      <p id="hint" class="hint" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section id="stage-unlocked" class="stage">
+    <div class="card">
+      <div class="eyebrow">Access granted</div>
+      <h1>Welcome,<br><em>junior.</em></h1>
+      <p>You made it through. Here's everything you need.</p>
+      <div class="details">
+        <div class="detail"><b>When</b><span id="out-date"></span></div>
+        <div class="detail"><b>Time</b><span id="out-time"></span></div>
+        <div class="detail"><b>Where</b><span id="out-venue"></span></div>
+        <div class="detail"><b>RSVP</b><span id="out-rsvp"></span></div>
+      </div>
+      <div class="actions">
+        <button id="calendar" type="button">Add to calendar</button>
+        <button id="again" type="button">Replay the intro</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const party = {
+  title: "Welcome Party — Juniors",
+  dateLabel: "Friday, 12 December 2026",
+  timeLabel: "7:00 PM – 10:00 PM",
+  venueLabel: "Main Auditorium, Block A",
+  rsvpLabel: "Reply to your senior coordinator by 5 December",
+  icsStart: "20261212T190000",
+  icsEnd: "20261212T220000"
+};
+const videoSrc = "";
+
+const stages = document.querySelectorAll(".stage");
+const line = document.getElementById("line");
+const progress = document.getElementById("progress");
+const skip = document.getElementById("skip");
+const answer = document.getElementById("answer");
+const hint = document.getElementById("hint");
+const media = document.getElementById("invite-video");
+let wentToQuestion = false;
+
+function show(id) {
+  stages.forEach(stage => stage.classList.toggle("active", stage.id === id));
+}
+
+function toQuestion() {
+  if (wentToQuestion) return;
+  wentToQuestion = true;
+  show("stage-question");
+  answer.focus();
+}
+
+function setLine(text) {
+  line.textContent = text;
+  line.classList.remove("pop");
+  void line.offsetWidth;
+  line.classList.add("pop");
+}
+
+function runTeaser() {
+  const beats = [
+    { at: 0, text: "Scan complete. One identity found.", status: "SCANNING" },
+    { at: 4, text: "Checking the junior list…", status: "MATCH FOUND" },
+    { at: 8, text: "Seniors, we have a match.", status: "VERIFIED" },
+    { at: 11, text: "YOU'VE BEEN SELECTED.", status: "SELECTED" },
+    { at: 15, text: "One question stands between you and the details.", status: "DECRYPTING" },
+    { at: 19, text: "Unlocking…", status: "UNLOCKING" }
+  ];
+  const started = Date.now();
+  const scanStatus = document.getElementById("scan-status");
+  let next = 0;
+  const timer = setInterval(() => {
+    const seconds = (Date.now() - started) / 1000;
+    while (next < beats.length && seconds >= beats[next].at) {
+      setLine(beats[next].text);
+      scanStatus.textContent = beats[next].status;
+      next++;
+    }
+    progress.style.width = Math.min(100, seconds / 20 * 100) + "%";
+    if (seconds >= 20) {
+      clearInterval(timer);
+      toQuestion();
+    }
+  }, 100);
+  setTimeout(() => skip.classList.add("show"), 4000);
+  skip.addEventListener("click", () => {
+    clearInterval(timer);
+    toQuestion();
+  });
+}
+
+function startVideo() {
+  media.hidden = false;
+  document.getElementById("teaser").hidden = true;
+  media.src = videoSrc;
+  media.play().catch(() => {});
+  media.addEventListener("ended", toQuestion);
+  setTimeout(toQuestion, 25000);
+  setTimeout(() => skip.classList.add("show"), 4000);
+  skip.addEventListener("click", toQuestion);
+}
+
+function confetti() {
+  const box = document.getElementById("confetti");
+  const colors = ["#ffcc66", "#b08bff", "#7b5cff", "#ffffff"];
+  for (let i = 0; i < 45; i++) {
+    const bit = document.createElement("i");
+    bit.style.left = Math.random() * 100 + "%";
+    bit.style.background = colors[i % colors.length];
+    bit.style.animationDelay = (Math.random() * 1.2) + "s";
+    bit.style.transform = "rotate(" + Math.random() * 180 + "deg)";
+    box.appendChild(bit);
+    setTimeout(() => bit.remove(), 5000);
+  }
+}
+
+function unlock() {
+  const value = answer.value.trim().toLowerCase().replace(/[^a-z]/g, "");
+  if (value.includes("selected")) {
+    show("stage-unlocked");
+    confetti();
+    return;
+  }
+  hint.textContent = "Hint: it starts with S and ends with -ected.";
+  const card = answer.closest(".card");
+  card.classList.remove("shake");
+  void card.offsetWidth;
+  card.classList.add("shake");
+}
+
+function downloadCalendar() {
+  const escape = text => text.replace(/([,;\\])/g, "\\$1").replace(/\n/g, "\\n");
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Welcome Party//EN",
+    "BEGIN:VEVENT",
+    "UID:" + Date.now() + "@welcome.local",
+    "DTSTAMP:" + stamp,
+    "DTSTART:" + party.icsStart,
+    "DTEND:" + party.icsEnd,
+    "SUMMARY:" + escape(party.title),
+    "LOCATION:" + escape(party.venueLabel),
+    "DESCRIPTION:" + escape(party.rsvpLabel),
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ].join("\r\n");
+  const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "welcome-party.ics";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById("out-date").textContent = party.dateLabel;
+document.getElementById("out-time").textContent = party.timeLabel;
+document.getElementById("out-venue").textContent = party.venueLabel;
+document.getElementById("out-rsvp").textContent = party.rsvpLabel;
+document.getElementById("unlock").addEventListener("click", unlock);
+document.getElementById("calendar").addEventListener("click", downloadCalendar);
+answer.addEventListener("keydown", event => {
+  if (event.key === "Enter") unlock();
+});
+document.getElementById("again").addEventListener("click", () => {
+  wentToQuestion = false;
+  skip.classList.remove("show");
+  progress.style.width = "0";
+  hint.textContent = "";
+  answer.value = "";
+  show("stage-video");
+  runTeaser();
+});
+
+if (videoSrc) startVideo(); else runTeaser();
+</script>
+</body>
+</html>
