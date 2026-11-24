@@ -703,7 +703,7 @@ function rsvp(attending) {
   registrations.push(entry);
   localStorage.setItem("dsRegistrations", JSON.stringify(registrations));
   currentEntry = entry;
-  ticket.textContent = "SEAT " + seat + " // " + entry.name;
+  ticket.textContent = "SEAT " + seat + " // " + entry.teacher;
   outCount.textContent = "SEATS BOOKED: " + attendingCount();
   show("stage-unlocked");
   bits();
